@@ -1,11 +1,10 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
                 script {
-                    sh 'flutter pub get'
+                    // Build the Dart application using Flutter
                     sh 'flutter build'
                 }
             }
@@ -13,23 +12,24 @@ pipeline {
         stage('Test') {
             steps {
                 script {
+                    // Run tests for the Dart application
                     sh 'flutter test'
                 }
             }
         }
         stage('Deploy') {
             when {
-                expression { params.DEPLOY_ENABLED }
+                expression { env.DEPLOY_ENABLED == 'true' }
             }
             steps {
                 script {
+                    // Deploy the Dart application using Flutter
                     sh 'flutter deploy'
                 }
             }
         }
     }
-
-    parameters {
-        boolean(name: 'DEPLOY_ENABLED', defaultValue: true, description: 'Enable deployment?')
+    environment {
+        DEPLOY_ENABLED = 'true'
     }
 }
