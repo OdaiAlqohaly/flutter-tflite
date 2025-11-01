@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'flutter:latest'
-            args '--user root'
-        }
-    }
+    agent any
 
     stages {
         stage('Build') {
@@ -15,7 +10,6 @@ pipeline {
                 }
             }
         }
-
         stage('Test') {
             steps {
                 script {
@@ -23,10 +17,9 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy') {
             when {
-                expression { env.DEPLOY_ENABLED == 'true' }
+                expression { params.DEPLOY_ENABLED }
             }
             steps {
                 script {
@@ -36,7 +29,7 @@ pipeline {
         }
     }
 
-    environment {
-        DEPLOY_ENABLED = 'true'
+    parameters {
+        boolean(name: 'DEPLOY_ENABLED', defaultValue: true, description: 'Enable deployment?')
     }
 }
